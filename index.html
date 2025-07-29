@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Educational & Residential Equity of California</title>
+
+  <!-- ================= CSS & FONTS ================= -->
+  <link rel="stylesheet" href="https://jasonrunnells.github.io/css/style.css">
+  <link rel="stylesheet" href="css/map-style.css">
+  <link href="https://unpkg.com/maplibre-gl@3.6.1/dist/maplibre-gl.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nouislider@15.7.1/dist/nouislider.min.css">
+</head>
+<body>
+  <div class="site-wrapper">
+    <!-- ================= HEADER SECTION (fix: move nav and hamburger above title) ================= -->
+    <header class="site-header">
+      <div class="header-inner">
+        <div class="header-brand">
+          <a href="https://jasonrunnells.github.io">Jason Runnells.</a>
+        </div>
+        <button class="hamburger" id="hamburger" aria-label="Menu" aria-expanded="false">
+          <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+          </span>
+        </button>
+        <nav class="site-nav" id="site-nav" aria-hidden="true">
+          <a href="https://jasonrunnells.github.io/"><span style="font-weight: 700;">Home</span></a>
+          <a style="border-bottom: none !important;" href="https://jasonrunnells.github.io/portfolio/"><span style="font-weight: 700;">Portfolio</span></a>
+          <div class="nav-separator"></div>
+          <a href="#overview">Overview</a>
+          <a href="#webapp">Web Application</a>
+          <a href="#stats">Statistics</a>
+          <a href="#conclusion">Conclusion</a>
+          <a href="#credits">Credits</a>
+        </nav>
+      </div>
+    </header>
+    <!-- ================= TITLE SECTION ================= -->
+    <h1 class="reveal">Educational & Residential Equity of California</h1>
+    <h3 class="subtitle reveal2">A web application and statistical analysis exploring education and residential equity across California</h3>
+    <p class="reveal2">Jason Runnells <span style="font-weight: 800;">|</span> July, 2025</p>
+    <div class="section-separator-full"></div>
+
+            <!-- OVERVIEW SECTION -->
+        <h2 id="overview" class="reveal">Overview</h2>
+        <div class="section-separator reveal"></div>
+        <p class="width-75 reveal2">
+This project explores educational and residential equity across California by analyzing public school performance alongside housing and income data at the county and census tract levels. Using CAASPP scores for English Language Arts and Mathematics, combined with U.S. Census indicators such as median income, home value, and housing costs, the project highlights how place-based disparities shape educational opportunity. A key variable is housing cost burden, defined by HUD as the percentage of income spent on housing—used here to assess affordability across communities. By mapping these indicators spatially, this project reveals patterns of inequality and helps contextualize how socioeconomic conditions relate to student achievement across the state.
+        </p>
+      
+    <div class="section-separator-full" style="margin-top: 4rem;"></div>
+
+                <!-- WEB APP SECTION -->
+        <h2 id="webapp" class="reveal">Web Application</h2>
+        <div class="section-separator reveal"></div>
+        <p class="width-75 reveal2">
+This web app lets users explore patterns of educational and housing inequality across California. Built with MapLibre and custom filters, it brings together test scores, income, home values, and housing costs into one interactive tool. Users can adjust sliders to highlight different ranges and toggle layers like tracts or schools to see how geography, education, and affordability intersect. The goal was to build something that not only visualizes data clearly, but also helps people ask better questions about equity at the state, county, and neighborhood level. Statistical analysis follows the application for those interested in exploring the data in more detail.        </p>
+
+
+    <!-- ================= MAP SECTION ================= -->
+    <div id="map" style="width:100%; height:800px; position:relative;">
+      <!-- === Schools Layer Legend === -->
+      <div class="info legend" id="schools-legend" style="position:absolute; bottom:24px; left:24px; z-index:10;">
+        <h3>LEGEND</h3>
+        <div class="legend-item">
+          <span class="legend-dot" style="background:#ffd500; border-color:#131313; border-radius: 100%;"></span>
+          <span class="legend-label">School</span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- ================= FILTER SIDEBAR ================= -->
+    <div id="map-controls" class="map-controls">
+      <!-- === Map Layers + Education Sliders Group (single boxed container) === -->
+      <div class="slider-group-wrapper">
+        asdf
+        <div class="toggle-controls">
+          <label class="switch-label">
+            <input type="checkbox" id="toggle-tracts" checked>
+            <span class="switch-slider"></span>
+            <span class="switch-text">Tracts</span>
+          </label>
+          <label class="switch-label">
+            <input type="checkbox" id="toggle-counties" checked>
+            <span class="switch-slider"></span>
+            <span class="switch-text">Counties</span>
+          </label>
+          <label class="switch-label">
+            <input type="checkbox" id="toggle-schools" checked>
+            <span class="switch-slider"></span>
+            <span class="switch-text">Schools</span>
+          </label>
+        </div>
+        asdf
+        <!-- ELA Slider -->
+        <div class="custom-slider-wrapper">
+          <label class="slider-label">ELA Proficiency Range:</label>
+          <div class="custom-slider" id="ela-custom-slider">
+            <div class="track"></div>
+            <div class="range"></div>
+            <div class="handle min-handle" id="ela-min">
+              <span class="tooltip" id="ela-min-val">1%</span>
+            </div>
+            <div class="handle max-handle" id="ela-max">
+              <span class="tooltip" id="ela-max-val">100%</span>
+            </div>
+          </div>
+        </div>
+        <!-- Math Slider -->
+        <div class="custom-slider-wrapper">
+          <label class="slider-label">Math Proficiency Range:</label>
+          <div class="custom-slider" id="math-custom-slider">
+            <div class="track"></div>
+            <div class="range"></div>
+            <div class="handle min-handle" id="math-min">
+              <span class="tooltip" id="math-min-val">1%</span>
+            </div>
+            <div class="handle max-handle" id="math-max">
+              <span class="tooltip" id="math-max-val">100%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- === Residential Sliders Group (boxed) === -->
+      <div class="slider-group-wrapper">
+        asdf
+        <!-- Income Slider -->
+        <div class="custom-slider-wrapper">
+          <label class="slider-label">Median Income Range:</label>
+          <div class="custom-slider" id="income-custom-slider">
+            <div class="track"></div>
+            <div class="range"></div>
+            <div class="handle min-handle" id="income-min">
+              <span class="tooltip" id="income-min-val">$0</span>
+            </div>
+            <div class="handle max-handle" id="income-max">
+              <span class="tooltip" id="income-max-val">$250,001</span>
+            </div>
+          </div>
+        </div>
+        <!-- Home Value Slider -->
+        <div class="custom-slider-wrapper">
+          <label class="slider-label">Median Home Value Range:</label>
+          <div class="custom-slider" id="value-custom-slider">
+            <div class="track"></div>
+            <div class="range"></div>
+            <div class="handle min-handle" id="value-min">
+              <span class="tooltip" id="value-min-val">$0</span>
+            </div>
+            <div class="handle max-handle" id="value-max">
+              <span class="tooltip" id="value-max-val">$2,000,001</span>
+            </div>
+          </div>
+        </div>
+        <!-- Monthly Home Costs Slider -->
+        <div class="custom-slider-wrapper">
+          <label class="slider-label">Median Monthly Home Costs Range:</label>
+          <div class="custom-slider" id="costs-custom-slider">
+            <div class="track"></div>
+            <div class="range"></div>
+            <div class="handle min-handle" id="costs-min">
+              <span class="tooltip" id="costs-min-val">$0</span>
+            </div>
+            <div class="handle max-handle" id="costs-max">
+              <span class="tooltip" id="costs-max-val">$4,000</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+<br><br>
+            <div class="section-separator-full" style="margin-bottom: 3rem;"></div>
+
+
+
+
+
+        <!-- STATISTICAL ANALYSIS -->
+<h2 id="stats" class="reveal">Statistical Analysis</h2>
+<div class="section-separator reveal"></div>
+<p class="width-75 reveal2">
+This section presents a series of charts that highlight key trends in education and housing across California. By summarizing relationships between test scores, income, home values, housing costs, and cost burden, these visualizations offer a clearer view of how geographic and economic factors shape educational opportunity. The data is organized by state, county, and census tract levels to provide multiple perspectives on the patterns and disparities uncovered in the analysis.
+</p>
+
+<div id="state" style="width: 100%; padding: 1rem; margin-bottom: 2rem; background: #fafafa; color: #131313; border: solid 1px #131313; border-radius: 10px;">
+    <h3 class="reveal">State Overview</h3>
+    <p class="width-75">
+The statewide CAASPP scores in English Language Arts and Mathematics establish a benchmark for academic performance across California. These charts provide a broad view of student achievement and help frame the more detailed regional and local patterns that follow. They serve as a reference point for evaluating how different areas compare to the state overall.
+
+    </p>
+</div>
+
+<!-- CA Statewide CAASPP Scores (English Language Arts) -->
+<div class="split-section split-50-50">
+    <div class="split-left center-vert">
+        <div class="left-vert-line">
+            <h3 class="reveal">CA Statewide CAASPP Scores (English Language Arts)</h3>
+            <p class="reveal2">
+                This chart shows how students across California performed in English Language Arts based on the latest CAASPP data. It provides a statewide benchmark for academic achievement.
+            </p>
+        </div>
+    </div>
+    <div class="split-right">
+        <div class="img-wrapper-fit">
+            <img src="images/state/chart_ela_statewide.png" alt="This chart shows how students across California performed in English Language Arts based on the latest CAASPP data. It provides a statewide benchmark for academic achievement." data-lightbox />
+        </div>
+    </div>
+</div>
+
+<!-- CA Statewide CAASPP Scores (English Language Arts) -->
+<div class="split-section split-50-50">
+    <div class="split-left center-vert">
+        <div class="left-vert-line">
+            <h3 class="reveal">CA Statewide CAASPP Scores (Mathematics)</h3>
+            <p class="reveal2">
+This chart displays student performance in Mathematics across the state. Together with the ELA scores, it helps set the context for comparing regional and local outcomes.
+            </p>
+        </div>
+    </div>
+    <div class="split-right">
+        <div class="img-wrapper-fit">
+            <img src="images/state/chart_math_statewide.png" alt="This chart displays student performance in Mathematics across the state. Together with the ELA scores, it helps set the context for comparing regional and local outcomes." data-lightbox />
+        </div>
+    </div>
+</div>
+
+<div id="county" style="width: 100%; padding: 1rem; margin-bottom: 2rem; background: #fafafa; color: #131313; border: solid 1px #131313; border-radius: 10px;">
+    <h3 class="reveal">County Overview</h3>
+    <p class="width-75">
+County-level analysis begins to reveal the relationships between educational outcomes and economic conditions. By comparing median income with average CAASPP scores, we can see how student performance often improves in wealthier counties. Symbols in these charts are weighted by population, giving more visual weight to areas with larger student populations. The additional comparison of income and home value highlights regional differences in housing affordability, offering further insight into the socioeconomic landscape shaping educational opportunity.
+    </p>
+</div>
+
+<!-- Median Income vs. Average CAASPP Scores (ELA) by County -->
+<div class="split-section split-50-50">
+    <div class="split-left center-vert">
+        <div class="left-vert-line">
+            <h3 class="reveal">Median Income vs. Average CAASPP Scores (ELA) by County</h3>
+            <p class="reveal2">
+This chart compares average English Language Arts scores with median household income across counties. Each symbol is weighted by population, allowing larger counties to carry greater visual emphasis.
+            </p>
+        </div>
+    </div>
+    <div class="split-right">
+        <div class="img-wrapper-fit">
+            <img src="images/county/chart_income_vs_ela_county.png" alt="This chart compares average English Language Arts scores with median household income across counties. Each symbol is weighted by population, allowing larger counties to carry greater visual emphasis." data-lightbox />
+        </div>
+    </div>
+</div>
+
+<!-- Median Income vs. Average CAASPP Scores (Math) by County -->
+<div class="split-section split-50-50">
+    <div class="split-left center-vert">
+        <div class="left-vert-line">
+            <h3 class="reveal">Median Income vs. Average CAASPP Scores (Math) by County</h3>
+            <p class="reveal2">
+This chart shows how math performance varies with income across California counties. Symbols are scaled based on population, giving a more accurate visual representation of how many students are affected by each region's conditions.
+            </p>
+        </div>
+    </div>
+    <div class="split-right">
+        <div class="img-wrapper-fit">
+            <img src="images/county/chart_income_vs_math_county.png" alt="This chart compares average English Language Arts scores with median household income across counties. Each symbol is weighted by population, allowing larger counties to carry greater visual emphasis." data-lightbox />
+        </div>
+    </div>
+</div>
+
+<div id="tract" style="width: 100%; padding: 1rem; margin-bottom: 2rem; background: #fafafa; color: #131313; border: solid 1px #131313; border-radius: 10px;">
+    <h3 class="reveal">Tract Overview</h3>
+    <p class="width-75">
+At the census tract level, disparities become more pronounced. These charts show how student test scores relate to income and housing costs at a neighborhood scale, uncovering patterns that are often hidden in county-wide averages. Tract-level data helps pinpoint where educational and economic inequalities are most concentrated, providing a finer resolution for understanding how local conditions influence student outcomes.
+    </p>
+</div>
+
+<!-- Median Income vs. Average CAASPP Scores (ELA) by Tract -->
+<div class="split-section split-50-50">
+    <div class="split-left center-vert">
+        <div class="left-vert-line">
+            <h3 class="reveal">Median Income vs. Average CAASPP Scores (ELA) by Tract</h3>
+            <p class="reveal2">
+This chart examines English Language Arts scores at the census tract level compared to income. It reveals local disparities that might be hidden in county-wide averages.
+            </p>
+        </div>
+    </div>
+    <div class="split-right">
+        <div class="img-wrapper-fit">
+            <img src="images/tract/chart_income_vs_ela_tract.png" alt="This chart examines English Language Arts scores at the census tract level compared to income. It reveals local disparities that might be hidden in county-wide averages." data-lightbox />
+        </div>
+    </div>
+</div>
+
+<!-- Median Income vs. Average CAASPP Scores (Math) by Tract -->
+<div class="split-section split-50-50">
+    <div class="split-left center-vert">
+        <div class="left-vert-line">
+            <h3 class="reveal">Median Income vs. Average CAASPP Scores (ELA) by Tract</h3>
+            <p class="reveal2">
+This chart shows how math performance varies with income at the neighborhood scale. It helps pinpoint areas where students may be underserved.
+            </p>
+        </div>
+    </div>
+    <div class="split-right">
+        <div class="img-wrapper-fit">
+            <img src="images/tract/chart_income_vs_math_tract.png" alt="This chart shows how math performance varies with income at the neighborhood scale. It helps pinpoint areas where students may be underserved." data-lightbox />
+        </div>
+    </div>
+</div>
+
+<!-- Median Income vs. Median Home Value by Tract -->
+<div class="split-section split-50-50">
+    <div class="split-left center-vert">
+        <div class="left-vert-line">
+            <h3 class="reveal">Median Income vs. Median Home Value by Tract</h3>
+            <p class="reveal2">
+This chart looks at the link between income and home value at the tract level, offering insight into housing affordability and how it relates to neighborhood wealth.
+            </p>
+        </div>
+    </div>
+    <div class="split-right">
+        <div class="img-wrapper-fit">
+            <img src="images/tract/chart_income_vs_value_tractwide.png" alt="This chart looks at the link between income and home value at the tract level, offering insight into housing affordability and how it relates to neighborhood wealth." data-lightbox />
+        </div>
+    </div>
+</div>
+
+
+
+        <div class="section-separator-full"></div>
+
+        <!-- CONCLUSION SECTION -->
+        <h2 id="conclusion" class="reveal">Conclusion</h2>
+        <div class="section-separator reveal"></div>
+        <p class="width-75 reveal2">
+This project provides insight into how student performance, memdian hosehold income, and housing affordability connect across California. By examining these factors at multiple scales, it becomes clear that access to educational opportunity is often tied to where people live, and/or can afford to live.
+<p class="width-75 reveal2">
+While the project doesn't claim to explain every cause or offer every solution, it provides a starting point for asking better questions; questions about how education and housing intersect, and how we might move toward greater equity across both.
+</p>
+</p>       
+<div class="section-separator-full" style="margin-top: 4rem;"></div>
+
+<!-- CREDITS SECTION -->
+<h3 id="credits" class="reveal">Credits</h3>
+<div class="section-separator reveal"></div>
+<ul class="styled-list reveal2 width-50" style="margin-bottom: 4rem;">
+    <li><strong>Population, Income, and Housing Data:</strong> U.S. Census Bureau, 2023 ACS 5-Year Estimates</li>
+    <li><strong>CAASPP Scores:</strong> California Assessment of Student Performance and Progress (CAASPP), 2023–2024</li>
+    <li><strong>School & District Data:</strong> California Department of Education, 2023–2024</li>
+</ul>
+
+
+
+
+  </div>
+
+  
+
+  <!-- ================= JAVASCRIPT ================= -->
+  <script src="https://unpkg.com/maplibre-gl@3.6.1/dist/maplibre-gl.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/nouislider@15.7.1/dist/nouislider.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const map = new maplibregl.Map({
+        container: 'map',
+        style: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json', // Carto Dark Matter basemap
+        center: [-120, 37.5],
+        zoom: 6
+      });
+
+      // Disable scroll zoom by default, enable for 3s after click
+      map.scrollZoom.disable();
+      map.on('click', function () {
+        if (!map.scrollZoom._enabled) {
+          map.scrollZoom.enable();
+          setTimeout(() => map.scrollZoom.disable(), 3000);
+        }
+      });
+
+      map.addControl(new maplibregl.NavigationControl(), 'top-right');
+
+      const californiaBounds = [
+        [-124.482003, 32.528832],
+        [-114.131211, 42.009518]
+      ];
+
+      // Helper to find first symbol/label layer in basemap
+      function getFirstSymbolLayerId() {
+        const layers = map.getStyle().layers;
+        for (const layer of layers) {
+          if (layer.type === 'symbol') {
+            return layer.id;
+          }
+        }
+        return null;
+      }
+
+      let tractsVisible = true;
+      let schoolsVisible = true;
+      let elaRange = [1, 100];
+      let mathRange = [1, 100];
+      let incomeRange = [0, 250001];
+      let valueRange = [0, 2000001];
+      let costsRange = [0, 4000];
+
+      map.on('load', function () {
+        map.fitBounds(californiaBounds, {padding: 40, duration: 0});
+
+        const labelLayerId = getFirstSymbolLayerId();
+
+        // Add tracts (fill, bottom layer)
+        addGeoJsonLayer({
+          url: 'data/tracts_all.json',
+          id: 'tracts',
+          type: 'fill',
+          paint: {
+            'fill-color': '#617d95',        // muted blue
+            'fill-opacity': 0.6,            // slightly lowered to make outline pop
+            'fill-outline-color': '#d0d6e2' // light cool gray for clean outline
+          },
+          insertBefore: labelLayerId
+        });
+
+        // Add counties (borders only, not clickable)
+        addGeoJsonLayer({
+          url: 'data/counties_all.json',
+          id: 'counties',
+          type: 'line',
+          paint: {
+            'line-color': '#fff',
+            'line-width': 1
+          }
+        });
+
+        // Add schools (top layer)
+        addGeoJsonLayer({
+          url: 'data/schools_all.json',
+          id: 'schools',
+          type: 'circle',
+          circlePaint: {
+            'circle-radius': 4,
+            'circle-color': '#ffd500',
+            'circle-stroke-width': .75,
+            'circle-stroke-color': '#131313',
+            'circle-opacity': 1
+          }
+        });
+
+        // Reorder counties layer after all layers loaded
+        map.on('idle', () => {
+          const labelLayerId = getFirstSymbolLayerId();
+          if (
+            map.getLayer('schools') &&
+            map.getLayer('tracts') &&
+            map.getLayer('counties') &&
+            labelLayerId
+          ) {
+            // Move counties just above tracts (below schools)
+            map.moveLayer('counties', 'schools');
+            // Move tracts just below counties
+            map.moveLayer('tracts', 'counties');
+            // Move schools just below the first label layer (so labels are always on top)
+            map.moveLayer('schools', labelLayerId);
+          }
+        });
+
+        // Toggle controls (switch style)
+        document.getElementById('toggle-tracts').onchange = function() {
+          if (map.getLayer('tracts')) {
+            map.setLayoutProperty('tracts', 'visibility', this.checked ? 'visible' : 'none');
+          }
+        };
+        document.getElementById('toggle-counties').onchange = function() {
+          if (map.getLayer('counties')) {
+            map.setLayoutProperty('counties', 'visibility', this.checked ? 'visible' : 'none');
+          }
+        };
+        document.getElementById('toggle-schools').onchange = function() {
+          if (map.getLayer('schools')) {
+            map.setLayoutProperty('schools', 'visibility', this.checked ? 'visible' : 'none');
+          }
+        };
+
+        // Custom Neumorphic Dual-handle Slider for ELA
+        function initCustomSlider({
+          sliderId,
+          minId,
+          maxId,
+          minValId,
+          maxValId,
+          rangeMin,
+          rangeMax,
+          defaultMin,
+          defaultMax,
+          onChange,
+          format = v => `${v}%`
+        }) {
+          const slider = document.getElementById(sliderId);
+          const minHandle = document.getElementById(minId);
+          const maxHandle = document.getElementById(maxId);
+          const minVal = document.getElementById(minValId);
+          const maxVal = document.getElementById(maxValId);
+          const range = slider.querySelector('.range');
+
+          let isDragging = null;
+
+          function updateSlider() {
+            const sliderWidth = slider.offsetWidth;
+            const minPercent = ((currentMin - rangeMin) / (rangeMax - rangeMin)) * 100;
+            const maxPercent = ((currentMax - rangeMin) / (rangeMax - rangeMin)) * 100;
+
+            minHandle.style.left = `${minPercent}%`;
+            maxHandle.style.left = `${maxPercent}%`;
+
+            range.style.left = `${minPercent}%`;
+            range.style.width = `${maxPercent - minPercent}%`;
+
+            minVal.innerText = format(currentMin);
+            maxVal.innerText = format(currentMax);
+
+            onChange(currentMin, currentMax);
+          }
+
+          function handleMouseMove(e) {
+            const rect = slider.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const percent = Math.max(0, Math.min(1, x / rect.width));
+            const value = Math.round(rangeMin + percent * (rangeMax - rangeMin));
+
+            if (isDragging === 'min') {
+              currentMin = Math.min(value, currentMax - 1);
+            } else if (isDragging === 'max') {
+              currentMax = Math.max(value, currentMin + 1);
+            }
+            updateSlider();
+          }
+
+          function attachDrag(handle, type) {
+            handle.addEventListener('mousedown', () => {
+              isDragging = type;
+              window.addEventListener('mousemove', handleMouseMove);
+            });
+          }
+
+          window.addEventListener('mouseup', () => {
+            isDragging = null;
+            window.removeEventListener('mousemove', handleMouseMove);
+          });
+
+          let currentMin = defaultMin;
+          let currentMax = defaultMax;
+          attachDrag(minHandle, 'min');
+          attachDrag(maxHandle, 'max');
+          updateSlider();
+        }
+
+        // Example: ELA slider hook into filterSchools()
+        initCustomSlider({
+          sliderId: 'ela-custom-slider',
+          minId: 'ela-min',
+          maxId: 'ela-max',
+          minValId: 'ela-min-val',
+          maxValId: 'ela-max-val',
+          rangeMin: 1,
+          rangeMax: 100,
+          defaultMin: 1,
+          defaultMax: 100,
+          onChange: (min, max) => {
+            elaRange = [min, max];
+            filterSchools();
+          }
+        });
+
+        // Custom Neumorphic Math Slider
+        initCustomSlider({
+          sliderId: 'math-custom-slider',
+          minId: 'math-min',
+          maxId: 'math-max',
+          minValId: 'math-min-val',
+          maxValId: 'math-max-val',
+          rangeMin: 1,
+          rangeMax: 100,
+          defaultMin: 1,
+          defaultMax: 100,
+          onChange: (min, max) => {
+            mathRange = [min, max];
+            filterSchools();
+          }
+        });
+
+        // Custom Neumorphic Income Slider
+        initCustomSlider({
+          sliderId: 'income-custom-slider',
+          minId: 'income-min',
+          maxId: 'income-max',
+          minValId: 'income-min-val',
+          maxValId: 'income-max-val',
+          rangeMin: 0,
+          rangeMax: 250001,
+          defaultMin: 0,
+          defaultMax: 250001,
+          onChange: (min, max) => {
+            incomeRange = [min, max];
+            filterTracts();
+          },
+          format: (v) => `$${Number(v).toLocaleString()}`
+        });
+
+        // Custom Neumorphic Median Home Value Slider
+        initCustomSlider({
+          sliderId: 'value-custom-slider',
+          minId: 'value-min',
+          maxId: 'value-max',
+          minValId: 'value-min-val',
+          maxValId: 'value-max-val',
+          rangeMin: 0,
+          rangeMax: 2000001,
+          defaultMin: 0,
+          defaultMax: 2000001,
+          onChange: (min, max) => {
+            valueRange = [min, max];
+            filterTracts();
+          },
+          format: (v) => `$${Number(v).toLocaleString()}`
+        });
+
+        // Custom Neumorphic Median Monthly Home Costs Slider
+        initCustomSlider({
+          sliderId: 'costs-custom-slider',
+          minId: 'costs-min',
+          maxId: 'costs-max',
+          minValId: 'costs-min-val',
+          maxValId: 'costs-max-val',
+          rangeMin: 0,
+          rangeMax: 4000,
+          defaultMin: 0,
+          defaultMax: 4000,
+          onChange: (min, max) => {
+            costsRange = [min, max];
+            filterTracts();
+          },
+          format: (v) => `$${Number(v).toLocaleString()}`
+        });
+
+        noUiSlider.create(document.getElementById('income-slider'), {
+          start: [incomeRange[0], incomeRange[1]],
+          connect: true,
+          range: { min: 0, max: 250001 },
+          step: 1000,
+          tooltips: [true, true],
+          format: {
+            to: v => `$${Number(v).toLocaleString()}`,
+            from: v => Number(v.replace(/[^0-9.-]+/g,""))
+          }
+        });
+        noUiSlider.create(document.getElementById('value-slider'), {
+          start: [valueRange[0], valueRange[1]],
+          connect: true,
+          range: { min: 0, max: 2000001 },
+          step: 10000,
+          tooltips: [true, true],
+          format: {
+            to: v => `$${Number(v).toLocaleString()}`,
+            from: v => Number(v.replace(/[^0-9.-]+/g,""))
+          }
+        });
+        noUiSlider.create(document.getElementById('costs-slider'), {
+          start: [costsRange[0], costsRange[1]],
+          connect: true,
+          range: { min: 0, max: 4000 },
+          step: 50,
+          tooltips: [true, true],
+          format: {
+            to: v => `$${Number(v).toLocaleString()}`,
+            from: v => Number(v.replace(/[^0-9.-]+/g,""))
+          }
+        });
+
+        document.getElementById('ela-slider').noUiSlider.on('update', function(values, handle){
+          elaRange = values.map(v => Number(v.replace('%','')));
+          filterSchools();
+        });
+        document.getElementById('income-slider').noUiSlider.on('update', function(values, handle){
+          incomeRange = values.map(v => Number(v.replace(/[^0-9.-]+/g,"")));
+          filterTracts();
+        });
+        document.getElementById('value-slider').noUiSlider.on('update', function(values, handle){
+          valueRange = values.map(v => Number(v.replace(/[^0-9.-]+/g,"")));
+          filterTracts();
+        });
+        document.getElementById('costs-slider').noUiSlider.on('update', function(values, handle){
+          costsRange = values.map(v => Number(v.replace(/[^0-9.-]+/g,"")));
+          filterTracts();
+        });
+
+        // Store references to sliders for reset
+        const elaSlider = document.getElementById('ela-slider').noUiSlider;
+        // const mathSlider = document.getElementById('math-slider').noUiSlider; // Remove this line
+        const incomeSlider = document.getElementById('income-slider').noUiSlider;
+        const valueSlider = document.getElementById('value-slider').noUiSlider;
+        const costsSlider = document.getElementById('costs-slider').noUiSlider;
+
+        // Remove reset-filters button logic
+      });
+
+      function addGeoJsonLayer({ url, id, type, paint, circlePaint, insertBefore = null }) {
+        fetch(url)
+          .then(res => res.json())
+          .then(data => {
+            map.addSource(id, {
+              type: 'geojson',
+              data: data
+            });
+
+            const layerOptions = {
+              id: id,
+              type: type,
+              source: id,
+              paint: type === 'circle' ? circlePaint : paint
+            };
+
+            if (insertBefore) {
+              map.addLayer(layerOptions, insertBefore);
+            } else {
+              map.addLayer(layerOptions);
+            }
+          });
+      }
+
+      // Filter schools layer based on slider values
+      function filterSchools() {
+        if (!map.getLayer('schools')) return;
+        map.setFilter('schools', [
+          'all',
+          ['>=', ['to-number', ['get', 'ela_pct']], elaRange[0]],
+          ['<=', ['to-number', ['get', 'ela_pct']], elaRange[1]],
+          ['>=', ['to-number', ['get', 'math_pct']], mathRange[0]],
+          ['<=', ['to-number', ['get', 'math_pct']], mathRange[1]]
+        ]);
+      }
+
+      // Filter tracts layer based on slider value
+      function filterTracts() {
+        if (!map.getLayer('tracts')) return;
+        map.setFilter('tracts', [
+          'all',
+          ['>=', ['to-number', ['get', 'med_income']], incomeRange[0]],
+          ['<=', ['to-number', ['get', 'med_income']], incomeRange[1]],
+          ['>=', ['to-number', ['get', 'med_value']], valueRange[0]],
+          ['<=', ['to-number', ['get', 'med_value']], valueRange[1]],
+          ['>=', ['to-number', ['get', 'med_costs']], costsRange[0]],
+          ['<=', ['to-number', ['get', 'med_costs']], costsRange[1]]
+        ]);
+      }
+
+      map.on('click', function (e) {
+        // Search for features in reverse layer priority: schools first
+        const layersInOrder = ['schools', 'tracts'];
+        let feature = null;
+
+        for (let layer of layersInOrder) {
+          const candidates = map.queryRenderedFeatures(e.point, { layers: [layer] });
+          if (candidates.length) {
+            feature = candidates[0];
+            break;
+          }
+        }
+
+        if (!feature) return;
+
+        const props = feature.properties;
+
+        const popupProps = feature.layer.id === 'schools'
+          ? [
+              ['Grades Served', 'grades_served'],
+              ['ELA Proficiency', 'ela_pct'],
+              ['Math Proficiency', 'math_pct'],
+              ['District', 'district_name'],
+              ['County', 'county_name'],
+              ['Street', 'street'],
+              ['City', 'city'],
+              ['Zip', 'zip'],
+              ['Phone', 'phone'],
+              ['Website', 'website'],
+            ]
+          : [
+              ['Tract Name', 'tract_name'],
+              ['County', 'county_name'],
+              ['Population', 'pop_tract'],
+              ['Burden Classification', 'burden_class_tract'],
+              ['Median Income', 'med_income'],
+              ['Median Home Value', 'med_value'],
+              ['Median Monthly Home Costs', 'med_costs']
+            ];
+
+        let html = `
+          <div class="ml-popup-content-wrapper">
+            <div class="ml-popup-content">
+              <h3>${props.school_name || props.tract_name || props.county_name || 'Feature'}</h3>
+        `;
+        popupProps.forEach(([label, key]) => {
+          let value = props[key] || 'N/A';
+          // Format ELA/Math as percent
+          if (
+            key === 'ela_pct' ||
+            key === 'math_pct' ||
+            key === 'avg_ela_pct' ||
+            key === 'avg_math_pct'
+          ) {
+            value = value !== 'N/A' ? `${value}%` : value;
+          }
+          // Format website as link
+          if (key === 'website' && value !== 'N/A') {
+            let url = value;
+            if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+            value = `<a href="${url}" target="_blank" rel="noopener">${url}</a>`;
+          }
+          // Format numbers with commas for thousands
+          if (
+            ['pop_tract', 'med_income', 'med_value', 'med_costs'].includes(key) &&
+            value !== 'N/A' && !isNaN(value)
+          ) {
+            value = Number(value).toLocaleString();
+            // Add $ for income, value, costs
+            if (['med_income', 'med_value', 'med_costs'].includes(key)) {
+              value = `$${value}`;
+            }
+          }
+          html += `
+            <div class="ml-section">
+              <span class="ml-section-title">${label}</span>
+              <span class="ml-section-value">${value}</span>
+            </div>
+          `;
+        });
+        html += `</div></div>`;
+
+        map.easeTo({
+          center: e.lngLat,
+          offset: [0, -100] // shift map up so popup is fully visible
+        });
+
+        new maplibregl.Popup({ closeButton: true, closeOnClick: true })
+          .setLngLat(e.lngLat)
+          .setHTML(html)
+          .addTo(map);
+
+        scrollPopupToTopWhenReady();
+      });
+
+      function scrollPopupToTopWhenReady() {
+        requestAnimationFrame(() => {
+          setTimeout(() => {
+            const popupContent = document.querySelector('.maplibregl-popup-content .ml-popup-content');
+            if (popupContent) {
+              popupContent.scrollTop = 0;
+              setTimeout(() => {
+                popupContent.scrollTop = 0;
+              }, 100);
+            }
+          }, 50);
+        });
+      }
+
+      ['schools', 'tracts'].forEach(layerId => {
+        map.on('mouseenter', layerId, () => {
+          map.getCanvas().style.cursor = 'pointer';
+        });
+        map.on('mouseleave', layerId, () => {
+          map.getCanvas().style.cursor = '';
+        });
+      });
+    });
+  </script>
+
+  <!-- Map event logic -->
+  <script>
+    // Your map event handlers go here
+    map.getCanvas().style.cursor = '';
+  </script>
+
+  <!-- Hamburger menu JS (required for menu to work) -->
+  <script src="https://jasonrunnells.github.io/js/main.js"></script>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p class="footer-text">© 2025 Jason Runnells</p>
+    </div>
+  </footer>
+</body>
+</html>
