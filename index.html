@@ -75,7 +75,9 @@ This web app lets users explore patterns of educational and housing inequality a
     <div id="map-controls" class="map-controls">
       <!-- === Map Layers + Education Sliders Group (single boxed container) === -->
       <div class="slider-group-wrapper">
-        asdf
+         <div class="filter-card">
+        <div class="filter-group-title">Layer Controls</div>
+        <p class="filter-group-desc">Toggle map layers to show or hide tracts, counties, or schools.</p>
         <div class="toggle-controls">
           <label class="switch-label">
             <input type="checkbox" id="toggle-tracts" checked>
@@ -93,7 +95,14 @@ This web app lets users explore patterns of educational and housing inequality a
             <span class="switch-text">Schools</span>
           </label>
         </div>
-        asdf
+         </div>
+
+
+                  <div class="filter-card">
+
+        <div class="filter-group-title">Education Filters</div>
+                <p class="filter-group-desc">Use the sliders to filter schools by proficiency.</p>
+
         <!-- ELA Slider -->
         <div class="custom-slider-wrapper">
           <label class="slider-label">ELA Proficiency Range:</label>
@@ -123,9 +132,15 @@ This web app lets users explore patterns of educational and housing inequality a
           </div>
         </div>
       </div>
+      </div>
+
       <!-- === Residential Sliders Group (boxed) === -->
       <div class="slider-group-wrapper">
-        asdf
+                 <div class="filter-card">
+
+        <div class="filter-group-title">Residential Filters</div>
+                <p class="filter-group-desc">Use the sliders to filter areas based on local housing and income statistics.</p>
+
         <!-- Income Slider -->
         <div class="custom-slider-wrapper">
           <label class="slider-label">Median Income Range:</label>
@@ -169,6 +184,7 @@ This web app lets users explore patterns of educational and housing inequality a
           </div>
         </div>
       </div>
+    </div>
     </div>
 <br><br>
             <div class="section-separator-full" style="margin-bottom: 3rem;"></div>
@@ -872,6 +888,16 @@ While the project doesn't claim to explain every cause or offer every solution, 
       });
     });
   </script>
+
+      <!-- LIGHTBOX MODAL -->
+    <div id="lightbox" class="lightbox">
+        <div class="lightbox-content">
+            <button class="lightbox-close" aria-label="Close">X</button>
+            <img id="lightbox-img" src="" alt="" />
+            <p id="lightbox-caption" class="lightbox-caption"></p>
+        </div>
+    </div>
+
 
   <!-- Map event logic -->
   <script>
