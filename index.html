@@ -537,9 +537,21 @@ While the project doesn't claim to explain every cause or offer every solution, 
             onChange(currentMin, currentMax);
           }
 
-          function handleMouseMove(e) {
+          // Helper function to get coordinates from mouse or touch event
+          function getEventCoordinates(e) {
+            if (e.touches && e.touches.length > 0) {
+              return { clientX: e.touches[0].clientX };
+            } else if (e.changedTouches && e.changedTouches.length > 0) {
+              return { clientX: e.changedTouches[0].clientX };
+            }
+            return { clientX: e.clientX };
+          }
+
+          function handleMove(e) {
+            e.preventDefault(); // Prevent scrolling on mobile
+            const coords = getEventCoordinates(e);
             const rect = slider.getBoundingClientRect();
-            const x = e.clientX - rect.left;
+            const x = coords.clientX - rect.left;
             const percent = Math.max(0, Math.min(1, x / rect.width));
             const value = Math.round(rangeMin + percent * (rangeMax - rangeMin));
 
@@ -551,17 +563,31 @@ While the project doesn't claim to explain every cause or offer every solution, 
             updateSlider();
           }
 
-          function attachDrag(handle, type) {
-            handle.addEventListener('mousedown', () => {
-              isDragging = type;
-              window.addEventListener('mousemove', handleMouseMove);
-            });
+          function handleEnd(e) {
+            isDragging = null;
+            window.removeEventListener('mousemove', handleMove);
+            window.removeEventListener('mouseup', handleEnd);
+            window.removeEventListener('touchmove', handleMove);
+            window.removeEventListener('touchend', handleEnd);
           }
 
-          window.addEventListener('mouseup', () => {
-            isDragging = null;
-            window.removeEventListener('mousemove', handleMouseMove);
-          });
+          function attachDrag(handle, type) {
+            // Mouse events
+            handle.addEventListener('mousedown', (e) => {
+              e.preventDefault();
+              isDragging = type;
+              window.addEventListener('mousemove', handleMove);
+              window.addEventListener('mouseup', handleEnd);
+            });
+
+            // Touch events
+            handle.addEventListener('touchstart', (e) => {
+              e.preventDefault();
+              isDragging = type;
+              window.addEventListener('touchmove', handleMove, { passive: false });
+              window.addEventListener('touchend', handleEnd);
+            });
+          }
 
           let currentMin = defaultMin;
           let currentMax = defaultMax;
